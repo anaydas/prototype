@@ -1,0 +1,16 @@
+# IntelliJ
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+build/
+target/
+
+# OS
+.DS_Store
+
+# Large binaries / media
+HLSServer/ffmpeg
+HLSServer/src/main/resources/input/*.mp4
+
