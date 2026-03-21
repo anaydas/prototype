@@ -43,13 +43,13 @@ The browser's built-in `EventSource` API handles all reconnection, parsing, and 
 
 ```java
 HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
-server.createContext("/logs/stream", new SseHandler());
-server.createContext("/",            new StaticHandler());
+server.createContext("/logs/", new SseHandler());
+server.createContext("/",      new StaticHandler());
 ```
 
 `HttpServer` is Java's **built-in HTTP server** (part of `com.sun.net.httpserver`).
 
-- `createContext(path, handler)` — registers a **handler** for a URL path. Every request to `/logs/stream` is routed to `SseHandler`.
+- `createContext(path, handler)` — registers a **handler** for a URL path prefix. Every request to `/logs/...` is routed to `SseHandler`.
 - `setExecutor(Executors.newCachedThreadPool())` — each request runs on its own thread, so multiple clients don't block each other.
 
 ---
@@ -80,7 +80,7 @@ exchange.sendResponseHeaders(200, 0);  // 0 = streaming/chunked (no fixed Conten
 ```java
 OutputStream out = exchange.getResponseBody();
 
-while (running) {
+while (true) {
     for (String line : lines) {
         String msg = "event: log\ndata: " + json + "\n\n";
         out.write(msg.getBytes("UTF-8"));
@@ -107,9 +107,9 @@ When the browser closes the tab, the next `out.write()` throws an `IOException` 
 
 ## Multiple Workflow Runs — Separate Endpoints
 
-### Approach 1 — Path-based routing (simplest)
+### Path-based routing
 
-Register a **single handler** on a prefix and extract the run ID from the URL:
+To support multiple workflows simultaneously, we use a single handler on a prefix and extract the specific run ID from the URL path:
 
 ```java
 server.createContext("/logs/", new SseHandler());
@@ -122,73 +122,21 @@ static class SseHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         // URL: /logs/1842/stream
         String path  = exchange.getRequestURI().getPath(); // "/logs/1842/stream"
-        String runId = path.split("/")[2];                 // "1842"
+        String[] segments = path.split("/");               // ["", "logs", "1842", "stream"]
+        String runId = segments[2];                        // "1842"
 
         File logFile = new File("logs/run-" + runId + ".log");
-        if (!logFile.exists()) { /* 404 */ return; }
+        if (!logFile.exists()) { /* send 404 */ return; }
 
+        // Send headers...
         // Stream that specific run's log file...
         List<String> lines = Files.readAllLines(logFile.toPath());
-        // ... same SSE loop as before
+        // ... same SSE stream loop
     }
 }
 ```
 
 Each browser tab connects to its own URL (`/logs/1842/stream` vs `/logs/1843/stream`) and gets its own independent thread streaming its own log file.
-
----
-
-### Approach 2 — Live broadcast with multiple subscribers (pub/sub)
-
-If the log source is **live** (e.g., a real build process writing to a shared buffer), you want a **pub/sub fan-out** model:
-
-```
-Build Process → writes lines → RunSession [runId=1842]
-                                    ├── subscriber (Browser Tab A)
-                                    ├── subscriber (Browser Tab B)
-                                    └── subscriber (Browser Tab C)
-```
-
-```java
-// A registry of active runs
-Map<String, RunSession> activeSessions = new ConcurrentHashMap<>();
-
-static class RunSession {
-    final String runId;
-    final List<OutputStream> subscribers = new CopyOnWriteArrayList<>();
-
-    // Called by build process to push a new log line
-    void broadcast(String line) {
-        String msg = "event: log\ndata: " + line + "\n\n";
-        for (OutputStream out : subscribers) {
-            try {
-                out.write(msg.getBytes());
-                out.flush();
-            } catch (IOException e) {
-                subscribers.remove(out); // dead client
-            }
-        }
-    }
-}
-
-// SSE handler just subscribes *this* browser connection to the session
-static class SseHandler implements HttpHandler {
-    void handle(HttpExchange exchange) throws IOException {
-        String runId      = parseRunId(exchange);
-        RunSession session = activeSessions.get(runId);
-
-        exchange.getResponseHeaders().add("Content-Type", "text/event-stream");
-        exchange.sendResponseHeaders(200, 0);
-
-        OutputStream out = exchange.getResponseBody();
-        session.subscribers.add(out);  // register this tab
-
-        // Block this thread until client disconnects
-        try { Thread.currentThread().join(); }
-        catch (InterruptedException e) { session.subscribers.remove(out); }
-    }
-}
-```
 
 ---
 
@@ -204,6 +152,5 @@ static class SseHandler implements HttpHandler {
 | `createContext(path, handler)` | Binds a URL prefix to a handler |
 | `CachedThreadPool` | Each client SSE connection = its own thread |
 | Path-based routing | `/logs/{runId}/stream` for isolated per-run streams |
-| Pub/sub `RunSession` | Fan-out one data source to many browser tabs |
 
 > **Core insight:** SSE is just a **forever-open HTTP response**. All the "magic" is simply writing `event:\ndata:\n\n` formatted strings to the response output stream and flushing regularly.

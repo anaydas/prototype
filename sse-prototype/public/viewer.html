@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workflow Run · GitHub Actions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Top Nav ─────────────────────────────────────── -->
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <div class="nav-brand">
+        <svg class="gh-logo" viewBox="0 0 16 16" fill="currentColor" width="20" height="20">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+            -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+            .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+            -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+            1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+            1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01
+            1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        <span class="nav-path">
+          <a href="/">octocat</a> /
+          <a href="/">hello-world</a> /
+          <a href="/">Actions</a>
+        </span>
+      </div>
+      <div class="nav-tabs">
+        <a class="nav-tab active" href="/">Actions</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Workflow Header ───────────────────────────────── -->
+  <div class="workflow-header">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">← All workflow runs</a>
+      </div>
+      <div class="workflow-title-row">
+        <div class="status-badge" id="statusBadge">
+          <span class="status-dot spinning"></span>
+          <span id="statusText">In progress</span>
+        </div>
+        <h1 class="workflow-name" id="workflowName">Loading…</h1>
+      </div>
+      <div class="workflow-meta">
+        <span class="meta-chip" id="runIdChip">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM8 0a8 8 0 100 16A8 8 0 008 0zm.5 4.75a.75.75 0 00-1.5 0v3.5a.75.75 0 00.471.696l2.5 1a.75.75 0 00.558-1.392L8.5 7.742V4.75z"/></svg>
+          Run #<span id="runIdLabel">…</span>
+        </span>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main Layout ────────────────────────────────────── -->
+  <div class="container main-layout">
+
+    <!-- Job Sidebar -->
+    <aside class="jobs-sidebar">
+      <h3 class="sidebar-title">Jobs</h3>
+      <ul class="job-list">
+        <li class="job-item active">
+          <span class="job-icon" id="jobIcon">
+            <svg class="spin-anim" viewBox="0 0 16 16" width="16" height="16" fill="none">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2"
+                stroke-dasharray="22 22" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span id="jobName">Loading…</span>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Log Panel -->
+    <section class="log-panel">
+      <div class="log-toolbar">
+        <span class="log-toolbar-title" id="logPanelTitle">Waiting…</span>
+        <div class="log-controls">
+          <label class="toggle-label">
+            <input type="checkbox" id="autoScrollToggle" checked />
+            <span>Auto-scroll</span>
+          </label>
+          <button class="btn-clear" id="clearBtn">Clear</button>
+        </div>
+      </div>
+      <div class="log-container" id="logContainer">
+        <div class="log-placeholder" id="logPlaceholder">
+          <svg class="pulse" viewBox="0 0 16 16" width="32" height="32" fill="none">
+            <circle cx="8" cy="8" r="7" stroke="#3fb950" stroke-width="2"
+              stroke-dasharray="22 22" stroke-linecap="round"/>
+          </svg>
+          <p>Connecting to log stream…</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

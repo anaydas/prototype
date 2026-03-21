@@ -1,0 +1,79 @@
+2024-03-21T11:00:00.000Z [INFO] Triggered by pull_request to main branch
+2024-03-21T11:00:00.123Z [INFO] Workflow: Docker Build & Push | Run #1843
+2024-03-21T11:00:00.200Z [INFO] ──────────────────────────────────────────
+2024-03-21T11:00:00.300Z [STEP] Setting up job: docker-build
+2024-03-21T11:00:00.400Z [INFO] Current runner version: 'v2.313.0'
+2024-03-21T11:00:00.500Z [INFO] Operating System: Ubuntu 22.04.4 LTS
+2024-03-21T11:00:00.600Z [INFO] Runner Image: ubuntu-22.04
+2024-03-21T11:00:00.800Z [INFO] GITHUB_TOKEN Permissions: packages:write, contents:read
+2024-03-21T11:00:01.000Z [INFO] ──────────────────────────────────────────
+2024-03-21T11:00:01.100Z [STEP] Checkout repository
+2024-03-21T11:00:01.200Z [INFO] Syncing repository: octocat/hello-world
+2024-03-21T11:00:01.400Z [INFO] Fetching the repository
+2024-03-21T11:00:02.000Z [INFO] remote: Enumerating objects: 98, done.
+2024-03-21T11:00:02.200Z [INFO] remote: Counting objects: 100% (98/98), done.
+2024-03-21T11:00:02.600Z [INFO] Receiving objects: 100% (98/98), 902.4 KiB | 8.1 MiB/s, done.
+2024-03-21T11:00:03.000Z [SUCCESS] Checkout complete. HEAD is at def5678
+2024-03-21T11:00:03.100Z [INFO] ──────────────────────────────────────────
+2024-03-21T11:00:03.200Z [STEP] Set up Docker Buildx
+2024-03-21T11:00:03.400Z [INFO] Creating a new builder instance
+2024-03-21T11:00:03.700Z [INFO] Switching to the new builder
+2024-03-21T11:00:04.000Z [INFO] Booting builder
+2024-03-21T11:00:04.500Z [SUCCESS] Docker Buildx v0.13.0 is ready
+2024-03-21T11:00:04.600Z [INFO] ──────────────────────────────────────────
+2024-03-21T11:00:04.700Z [STEP] Login to GitHub Container Registry
+2024-03-21T11:00:04.900Z [INFO] Logging into ghcr.io
+2024-03-21T11:00:05.100Z [INFO] Using credentials from GITHUB_TOKEN
+2024-03-21T11:00:05.300Z [SUCCESS] Login Succeeded
+2024-03-21T11:00:05.400Z [INFO] ──────────────────────────────────────────
+2024-03-21T11:00:05.500Z [STEP] Extract Docker metadata
+2024-03-21T11:00:05.700Z [INFO] Image: ghcr.io/octocat/hello-world
+2024-03-21T11:00:05.900Z [INFO] Tags: ghcr.io/octocat/hello-world:pr-42
+2024-03-21T11:00:06.000Z [INFO] Tags: ghcr.io/octocat/hello-world:sha-def5678
+2024-03-21T11:00:06.200Z [SUCCESS] Metadata extracted
+2024-03-21T11:00:06.300Z [INFO] ──────────────────────────────────────────
+2024-03-21T11:00:06.400Z [STEP] Build Docker image
+2024-03-21T11:00:06.600Z [INFO] Running: docker buildx build --platform linux/amd64,linux/arm64
+2024-03-21T11:00:07.000Z [INFO] #1 [internal] load build definition from Dockerfile
+2024-03-21T11:00:07.200Z [INFO] #1 DONE 0.1s
+2024-03-21T11:00:07.400Z [INFO] #2 [internal] load .dockerignore
+2024-03-21T11:00:07.600Z [INFO] #2 DONE 0.1s
+2024-03-21T11:00:07.800Z [INFO] #3 [internal] load metadata for node:20-alpine
+2024-03-21T11:00:08.200Z [INFO] #3 DONE 1.2s
+2024-03-21T11:00:08.400Z [INFO] #4 [1/5] FROM node:20-alpine@sha256:abc123
+2024-03-21T11:00:08.600Z [INFO] #4 CACHED
+2024-03-21T11:00:08.800Z [INFO] #5 [2/5] WORKDIR /app
+2024-03-21T11:00:09.000Z [INFO] #5 DONE 0.2s
+2024-03-21T11:00:09.200Z [INFO] #6 [3/5] COPY package*.json ./
+2024-03-21T11:00:09.400Z [INFO] #6 DONE 0.1s
+2024-03-21T11:00:09.600Z [INFO] #7 [4/5] RUN npm ci --only=production
+2024-03-21T11:00:12.000Z [INFO] #7 DONE 8.3s
+2024-03-21T11:00:12.200Z [INFO] #8 [5/5] COPY . .
+2024-03-21T11:00:12.400Z [INFO] #8 DONE 0.4s
+2024-03-21T11:00:12.600Z [INFO] #9 exporting to image
+2024-03-21T11:00:13.000Z [INFO] #9 exporting layers
+2024-03-21T11:00:13.800Z [INFO] #9 pushing layers for linux/amd64
+2024-03-21T11:00:14.500Z [INFO] #9 pushing layers for linux/arm64
+2024-03-21T11:00:15.200Z [INFO] #9 pushing manifest for ghcr.io/octocat/hello-world:pr-42
+2024-03-21T11:00:15.800Z [SUCCESS] Docker image built and pushed successfully
+2024-03-21T11:00:15.900Z [INFO] Image digest: sha256:deadbeef1234567890abcdef
+2024-03-21T11:00:16.000Z [INFO] ──────────────────────────────────────────
+2024-03-21T11:00:16.100Z [STEP] Run Trivy vulnerability scanner
+2024-03-21T11:00:16.300Z [INFO] Scanning image: ghcr.io/octocat/hello-world:pr-42
+2024-03-21T11:00:16.500Z [INFO] Fetching vulnerability database...
+2024-03-21T11:00:17.000Z [INFO] Scanning for OS vulnerabilities
+2024-03-21T11:00:17.300Z [INFO] Scanning for library vulnerabilities
+2024-03-21T11:00:17.600Z [WARNING] CVE-2024-1234 | HIGH | libssl: buffer overflow (fixable)
+2024-03-21T11:00:17.800Z [WARNING] CVE-2024-5678 | MEDIUM | busybox: path traversal (fixable)
+2024-03-21T11:00:18.000Z [INFO] Total: 2 vulnerabilities (HIGH: 1, MEDIUM: 1)
+2024-03-21T11:00:18.200Z [WARNING] Vulnerabilities found but below threshold. Continuing...
+2024-03-21T11:00:18.300Z [INFO] ──────────────────────────────────────────
+2024-03-21T11:00:18.400Z [STEP] Post job cleanup
+2024-03-21T11:00:18.600Z [INFO] Removing intermediate containers
+2024-03-21T11:00:18.800Z [INFO] Cleaning up build cache
+2024-03-21T11:00:19.000Z [INFO] Logging out from ghcr.io
+2024-03-21T11:00:19.200Z [SUCCESS] Logout successful
+2024-03-21T11:00:19.300Z [INFO] ──────────────────────────────────────────
+2024-03-21T11:00:19.400Z [INFO] Job summary: docker-build completed with warnings
+2024-03-21T11:00:19.500Z [INFO] Duration: 19.5s | Billable time: 1 minute
+2024-03-21T11:00:19.600Z [SUCCESS] Workflow completed with warnings ⚠

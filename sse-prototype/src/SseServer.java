@@ -9,56 +9,83 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 /**
- * Minimal Java SSE server (no external dependencies).
- * - GET /          → serves public/index.html
- * - GET /style.css → serves public/style.css
- * - GET /app.js    → serves public/app.js
- * - GET /logs/stream → SSE endpoint, streams workflow.log lines in loop
+ * Java SSE server with path-based routing for multiple workflow runs.
+ *
+ * Routes:
+ *   GET /               → public/index.html  (home: list of runs)
+ *   GET /viewer.html    → public/viewer.html (log viewer for a specific run)
+ *   GET /style.css      → public/style.css
+ *   GET /app.js         → public/app.js
+ *   GET /logs/{runId}/stream → SSE stream for logs/run-{runId}.log
  */
 public class SseServer {
 
-    private static final int    PORT     = 3000;
-    private static final String LOG_FILE = "logs/workflow.log";
-    private static final long   LINE_DELAY_MS  = 120;  // delay between lines
-    private static final long   LOOP_PAUSE_MS  = 2000; // pause between loops
+    private static final int  PORT          = 3000;
+    private static final long LINE_DELAY_MS = 120;   // ms between log lines
+    private static final long LOOP_PAUSE_MS = 2000;  // ms pause before replaying
 
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
-        server.createContext("/logs/stream", new SseHandler());
-        server.createContext("/",            new StaticHandler());
+        // Path-based SSE handler — matches /logs/*/stream
+        server.createContext("/logs/", new SseHandler());
+
+        // Static file handler — serves everything else from public/
+        server.createContext("/", new StaticHandler());
 
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();
 
         System.out.println("\n🚀 SSE Server started at http://localhost:" + PORT);
-        System.out.println("   Streaming logs from: " + LOG_FILE + "\n");
+        System.out.println("   SSE endpoints:");
+        System.out.println("     http://localhost:" + PORT + "/logs/1842/stream");
+        System.out.println("     http://localhost:" + PORT + "/logs/1843/stream\n");
     }
 
-    // ──────────────────────────────────────────────
-    // SSE Handler
-    // ──────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────
+    // SSE Handler — /logs/{runId}/stream
+    // Extracts runId from URL, finds logs/run-{runId}.log, streams it.
+    // ──────────────────────────────────────────────────────────
     static class SseHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            // CORS
+
+            // ── Parse runId from path: /logs/1842/stream ──
+            String path  = exchange.getRequestURI().getPath(); // e.g. "/logs/1842/stream"
+            String[] segments = path.split("/");               // ["", "logs", "1842", "stream"]
+
+            if (segments.length < 4 || !segments[3].equals("stream")) {
+                send404(exchange, "Invalid SSE path. Use /logs/{runId}/stream");
+                return;
+            }
+
+            String runId   = segments[2];
+            File   logFile = new File("logs/run-" + runId + ".log");
+
+            if (!logFile.exists()) {
+                send404(exchange, "No log file found for run: " + runId);
+                return;
+            }
+
+            // ── SSE response headers ──
             exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             exchange.getResponseHeaders().add("Content-Type",  "text/event-stream");
             exchange.getResponseHeaders().add("Cache-Control", "no-cache");
             exchange.getResponseHeaders().add("Connection",    "keep-alive");
-            exchange.sendResponseHeaders(200, 0); // 0 = chunked / streaming
+            exchange.sendResponseHeaders(200, 0); // 0 = chunked/streaming
 
-            OutputStream out = exchange.getResponseBody();
-            boolean running = true;
-            int loopCount = 0;
+            System.out.println("[SSE] Client connected → run #" + runId);
+
+            OutputStream out      = exchange.getResponseBody();
+            int          loopCount = 0;
 
             try {
-                List<String> lines = Files.readAllLines(Paths.get(LOG_FILE));
+                List<String> lines = Files.readAllLines(logFile.toPath());
 
-                while (running) {
+                while (true) {
                     loopCount++;
-                    // Send "start" event so frontend knows a new loop began
-                    writeEvent(out, "start", "{\"loop\":" + loopCount + "}");
+                    // Notify frontend that a new loop/replay is starting
+                    writeEvent(out, "start", "{\"loop\":" + loopCount + ",\"runId\":\"" + runId + "\"}");
 
                     for (int i = 0; i < lines.size(); i++) {
                         String raw  = lines.get(i);
@@ -70,12 +97,10 @@ public class SseServer {
                         Thread.sleep(LINE_DELAY_MS);
                     }
 
-                    // Pause before next loop
                     Thread.sleep(LOOP_PAUSE_MS);
                 }
             } catch (InterruptedException | IOException e) {
-                // Client disconnected — clean exit
-                System.out.println("[SSE] Client disconnected (loop " + loopCount + ").");
+                System.out.println("[SSE] Client disconnected ← run #" + runId + " (loop " + loopCount + ")");
             } finally {
                 try { out.close(); } catch (IOException ignored) {}
             }
@@ -95,20 +120,25 @@ public class SseServer {
             return "info";
         }
 
-        /** Minimal JSON string escaping */
         private String jsonString(String s) {
-            String escaped = s.replace("\\", "\\\\")
-                              .replace("\"", "\\\"")
-                              .replace("\n", "\\n")
-                              .replace("\r", "\\r")
-                              .replace("\t", "\\t");
-            return "\"" + escaped + "\"";
+            return "\"" + s.replace("\\", "\\\\")
+                           .replace("\"", "\\\"")
+                           .replace("\n", "\\n")
+                           .replace("\r", "\\r")
+                           .replace("\t", "\\t") + "\"";
+        }
+
+        private void send404(HttpExchange ex, String msg) throws IOException {
+            byte[] body = msg.getBytes("UTF-8");
+            ex.sendResponseHeaders(404, body.length);
+            ex.getResponseBody().write(body);
+            ex.getResponseBody().close();
         }
     }
 
-    // ──────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────
     // Static File Handler — serves files from public/
-    // ──────────────────────────────────────────────
+    // ──────────────────────────────────────────────────────────
     static class StaticHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -117,17 +147,15 @@ public class SseServer {
 
             File file = new File("public" + uri);
             if (!file.exists() || file.isDirectory()) {
-                String body = "404 Not Found";
-                exchange.sendResponseHeaders(404, body.length());
-                exchange.getResponseBody().write(body.getBytes());
+                byte[] body = "404 Not Found".getBytes();
+                exchange.sendResponseHeaders(404, body.length);
+                exchange.getResponseBody().write(body);
                 exchange.getResponseBody().close();
                 return;
             }
 
-            String mime = getMimeType(file.getName());
-            exchange.getResponseHeaders().add("Content-Type", mime);
+            exchange.getResponseHeaders().add("Content-Type", getMimeType(file.getName()));
             exchange.sendResponseHeaders(200, file.length());
-
             try (InputStream in = new FileInputStream(file);
                  OutputStream out = exchange.getResponseBody()) {
                 in.transferTo(out);

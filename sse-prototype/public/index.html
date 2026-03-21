@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CI/CD Pipeline · Run #1842 · GitHub Actions</title>
+  <title>Actions · octocat/hello-world</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
@@ -25,88 +25,95 @@
             1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
         </svg>
         <span class="nav-path">
-          <a href="#">octocat</a> /
-          <a href="#">hello-world</a>
+          <a href="/">octocat</a> /
+          <a href="/">hello-world</a>
         </span>
       </div>
       <div class="nav-tabs">
-        <a class="nav-tab active" href="#">Actions</a>
+        <a class="nav-tab active" href="/">Actions</a>
       </div>
     </div>
   </nav>
 
-  <!-- ── Workflow Header ───────────────────────────────── -->
-  <div class="workflow-header">
+  <!-- ── Page Header ───────────────────────────────── -->
+  <div class="page-header">
     <div class="container">
-      <div class="workflow-title-row">
-        <div class="status-badge" id="statusBadge">
-          <span class="status-dot spinning"></span>
-          <span id="statusText">In progress</span>
-        </div>
-        <h1 class="workflow-name">CI/CD Pipeline</h1>
-      </div>
-      <div class="workflow-meta">
-        <span class="meta-chip">
-          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM8 0a8 8 0 100 16A8 8 0 008 0zm.5 4.75a.75.75 0 00-1.5 0v3.5a.75.75 0 00.471.696l2.5 1a.75.75 0 00.558-1.392L8.5 7.742V4.75z"/></svg>
-          Run #1842
-        </span>
-        <span class="meta-chip">
-          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M11.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122V6A2.5 2.5 0 0110 8.5H6a1 1 0 00-1 1v1.128a2.251 2.251 0 11-1.5 0V9.5A2.5 2.5 0 016 7h4a1 1 0 001-1v-.628A2.25 2.25 0 019.5 3.25zM4.25 12a.75.75 0 100 1.5.75.75 0 000-1.5z"/></svg>
-          push to <strong>main</strong>
-        </span>
-        <span class="meta-chip">
-          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/><path fill-rule="evenodd" d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM8 0a8 8 0 100 16A8 8 0 008 0z"/></svg>
-          abc1234
-        </span>
-        <span class="meta-chip" id="loopBadge" style="display:none">
-          🔄 Loop <span id="loopCount">1</span>
-        </span>
-      </div>
+      <h1 class="page-title">Actions</h1>
+      <p class="page-subtitle">Workflow runs for <strong>octocat/hello-world</strong></p>
     </div>
   </div>
 
-  <!-- ── Main Layout ────────────────────────────────────── -->
-  <div class="container main-layout">
+  <!-- ── Run List ──────────────────────────────────── -->
+  <div class="container runs-container">
 
-    <!-- Job Sidebar -->
-    <aside class="jobs-sidebar">
-      <h3 class="sidebar-title">Jobs</h3>
-      <ul class="job-list">
-        <li class="job-item active">
-          <span class="job-icon" id="jobIcon">
-            <svg class="spin-anim" viewBox="0 0 16 16" width="16" height="16" fill="none">
-              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2" stroke-dasharray="22 22" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <span>build-and-test</span>
-        </li>
-      </ul>
-    </aside>
+    <div class="runs-toolbar">
+      <span class="runs-count">2 workflow runs</span>
+    </div>
 
-    <!-- Log Panel -->
-    <section class="log-panel">
-      <div class="log-toolbar">
-        <span class="log-toolbar-title">build-and-test</span>
-        <div class="log-controls">
-          <label class="toggle-label">
-            <input type="checkbox" id="autoScrollToggle" checked />
-            <span>Auto-scroll</span>
-          </label>
-          <button class="btn-clear" id="clearBtn">Clear</button>
-        </div>
-      </div>
-      <div class="log-container" id="logContainer">
-        <div class="log-placeholder" id="logPlaceholder">
-          <svg class="pulse" viewBox="0 0 16 16" width="32" height="32" fill="none">
-            <circle cx="8" cy="8" r="7" stroke="#3fb950" stroke-width="2" stroke-dasharray="22 22" stroke-linecap="round"/>
+    <ul class="run-list">
+
+      <!-- Run #1842 -->
+      <li class="run-card">
+        <div class="run-status-icon success">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/>
           </svg>
-          <p>Waiting for log stream…</p>
         </div>
-      </div>
-    </section>
+        <div class="run-info">
+          <a class="run-name" href="/viewer.html?runId=1842">CI/CD Pipeline</a>
+          <div class="run-meta">
+            <span class="run-meta-item">
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M11.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122V6A2.5 2.5 0 0110 8.5H6a1 1 0 00-1 1v1.128a2.251 2.251 0 11-1.5 0V9.5A2.5 2.5 0 016 7h4a1 1 0 001-1v-.628A2.25 2.25 0 019.5 3.25zM4.25 12a.75.75 0 100 1.5.75.75 0 000-1.5z"/></svg>
+              push to <strong>main</strong>
+            </span>
+            <span class="run-meta-item">
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/><path fill-rule="evenodd" d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM8 0a8 8 0 100 16A8 8 0 008 0z"/></svg>
+              abc1234
+            </span>
+            <span class="run-meta-item">
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM8 0a8 8 0 100 16A8 8 0 008 0zm.5 4.75a.75.75 0 00-1.5 0v3.5a.75.75 0 00.471.696l2.5 1a.75.75 0 00.558-1.392L8.5 7.742V4.75z"/></svg>
+              17s · Mar 21, 2024
+            </span>
+          </div>
+        </div>
+        <div class="run-actions">
+          <span class="run-id">#1842</span>
+          <a class="btn-view" href="/viewer.html?runId=1842">View logs →</a>
+        </div>
+      </li>
 
+      <!-- Run #1843 -->
+      <li class="run-card">
+        <div class="run-status-icon warning">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+            <path d="M8.22 1.754a.25.25 0 00-.44 0L1.698 13.132a.25.25 0 00.22.368h12.164a.25.25 0 00.22-.368L8.22 1.754zm-1.763-.707c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575L6.457 1.047zM9 11a1 1 0 11-2 0 1 1 0 012 0zm-.25-5.25a.75.75 0 00-1.5 0v2.5a.75.75 0 001.5 0v-2.5z"/>
+          </svg>
+        </div>
+        <div class="run-info">
+          <a class="run-name" href="/viewer.html?runId=1843">Docker Build &amp; Push</a>
+          <div class="run-meta">
+            <span class="run-meta-item">
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M11.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122V6A2.5 2.5 0 0110 8.5H6a1 1 0 00-1 1v1.128a2.251 2.251 0 11-1.5 0V9.5A2.5 2.5 0 016 7h4a1 1 0 001-1v-.628A2.25 2.25 0 019.5 3.25zM4.25 12a.75.75 0 100 1.5.75.75 0 000-1.5z"/></svg>
+              pull_request to <strong>main</strong>
+            </span>
+            <span class="run-meta-item">
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/><path fill-rule="evenodd" d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM8 0a8 8 0 100 16A8 8 0 008 0z"/></svg>
+              def5678
+            </span>
+            <span class="run-meta-item">
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor"><path d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM8 0a8 8 0 100 16A8 8 0 008 0zm.5 4.75a.75.75 0 00-1.5 0v3.5a.75.75 0 00.471.696l2.5 1a.75.75 0 00.558-1.392L8.5 7.742V4.75z"/></svg>
+              19s · Mar 21, 2024
+            </span>
+          </div>
+        </div>
+        <div class="run-actions">
+          <span class="run-id">#1843</span>
+          <a class="btn-view" href="/viewer.html?runId=1843">View logs →</a>
+        </div>
+      </li>
+
+    </ul>
   </div>
 
-  <script src="app.js"></script>
 </body>
 </html>
